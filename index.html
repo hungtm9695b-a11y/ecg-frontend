@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hỗ Trợ Phân Tích ECG – ESC 2024</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f2f5f8;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 10px;
+        }
+
+        .card {
+            border-radius: 14px;
+            border: none;
+            padding: 14px !important;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+            background: white;
+        }
+
+        h5 {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        h2.title {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #0050b3;
+        }
+
+        p, label, div {
+            font-size: 14px;
+        }
+
+        .risk-high { color: white; background: #8B0000; }
+        .risk-medium { color: white; background: #b8860b; }
+        .risk-low { color: white; background: #0B6623; }
+
+        #muc_nguy_co {
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container" style="max-width: 650px;">
+
+    <!-- HEADER + LOGO -->
+    <header class="text-center mb-3">
+
+        <div style="display:flex; align-items:center; justify-content:center; gap:12px;">
+            <img src="logo-bvdg.png"
+                 alt="Logo BVĐK Đức Giang"
+                 style="width:58px; height:58px; border-radius:50%; object-fit:cover;">
+
+            <h2 class="title" style="margin:0; padding:0; line-height:1.3;">
+                AI HỖ TRỢ PHÁT HIỆN SỚM THIẾU MÁU CƠ TIM <br> (ESC 2024)
+            </h2>
+        </div>
+
+        <p style="font-size:13px; color:#666; margin-top:6px;">
+            <i>Sản phẩm cuộc thi sáng tạo ngành Y tế Thủ đô</i>
+        </p>
+
+    </header>
+
+    <!-- THÔNG TIN BỆNH NHÂN -->
+    <div class="card">
+        <h5>1. Thông tin bệnh nhân</h5>
+
+        <div class="row g-2">
+            <div class="col-6">
+                <label>Tuổi</label>
+                <input id="age" class="form-control form-control-sm" type="number">
+            </div>
+            <div class="col-6">
+                <label>Giới tính</label>
+                <select id="sex" class="form-control form-control-sm">
+                    <option value="">Không chọn</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                </select>
+            </div>
+        </div>
+
+        <hr>
+
+        <h6 class="fw-bold">Dấu hiệu sinh tồn</h6>
+
+        <div class="row g-2">
+            <div class="col-4"><label>Nhịp tim</label><input id="hr" class="form-control form-control-sm"></div>
+            <div class="col-4"><label>Huyết áp</label><input id="bp" class="form-control form-control-sm"></div>
+            <div class="col-4"><label>SpO₂</label><input id="spo2" class="form-control form-control-sm"></div>
+        </div>
+    </div>
+
+    <!-- TRIỆU CHỨNG -->
+    <div class="card">
+        <h5>2. Triệu chứng lâm sàng</h5>
+
+        <div class="row g-2">
+            <div class="col-6">
+                <label class="fw-bold">Kiểu đau ngực</label>
+                <div><input type="checkbox" class="symptom" value="Đau tức giữa ngực"> Đau tức giữa ngực</div>
+                <div><input type="checkbox" class="symptom" value="Đè nặng bóp nghẹt"> Đè nặng / bóp nghẹt</div>
+            </div>
+
+            <div class="col-6">
+                <label class="fw-bold">Lan đau</label>
+                <div><input type="checkbox" class="symptom" value="Lan lên hàm"> Lan lên hàm</div>
+                <div><input type="checkbox" class="symptom" value="Lan vai trái"> Vai / tay trái</div>
+            </div>
+
+            <div class="col-6 mt-2">
+                <label class="fw-bold">Thời gian</label>
+                <div><input type="checkbox" class="symptom" value="Đau >20 phút"> Đau >20 phút</div>
+                <div><input type="checkbox" class="symptom" value="Cơn ngắn tái phát"> Cơn ngắn, tái phát</div>
+            </div>
+
+            <div class="col-6 mt-2">
+                <label class="fw-bold">Triệu chứng kèm theo</label>
+                <div><input type="checkbox" class="symptom" value="Khó thở"> Khó thở</div>
+                <div><input type="checkbox" class="symptom" value="Vã mồ hôi"> Vã mồ hôi</div>
+                <div><input type="checkbox" class="symptom" value="Buồn nôn"> Buồn nôn</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- YẾU TỐ NGUY CƠ -->
+    <div class="card">
+        <h5>3. Yếu tố nguy cơ tim mạch</h5>
+        <div><input type="checkbox" class="risk" value="Tăng huyết áp"> Tăng huyết áp</div>
+        <div><input type="checkbox" class="risk" value="Đái tháo đường"> Đái tháo đường</div>
+        <div><input type="checkbox" class="risk" value="RL lipid máu"> Rối loạn lipid</div>
+        <div><input type="checkbox" class="risk" value="Hút thuốc"> Hút thuốc</div>
+        <div><input type="checkbox" class="risk" value="Bệnh mạch vành"> Tiền sử bệnh mạch vành</div>
+    </div>
+
+    <!-- UPLOAD ECG -->
+    <div class="card">
+        <h5>4. Tải ảnh ECG</h5>
+        <input id="ecg" class="form-control form-control-sm" type="file" accept="image/*">
+    </div>
+
+    <button id="analyzeBtn" class="btn btn-primary mb-3">Phân tích ECG</button>
+
+    <div id="loading" style="display:none;" class="text-center mb-3">
+        <div class="spinner-border text-primary"></div>
+        <p>Đang phân tích...</p>
+    </div>
+
+    <!-- KẾT QUẢ -->
+    <div id="resultBox" style="display:none;">
+
+        <div class="card">
+            <h5 class="text-primary">Kết quả phân tích ECG</h5>
+            <p id="ecg_phan_tich"></p>
+            <p id="ketluan_ecg" class="fw-bold"></p>
+
+            <p id="roi_loan_nhip_block" style="display:none;">
+                <b>Rối loạn nhịp:</b> <span id="roi_loan_nhip"></span>
+            </p>
+        </div>
+
+        <div class="card">
+            <h5 class="text-primary">Mức nguy cơ</h5>
+            <div id="muc_nguy_co"></div>
+            <p class="mt-2"><b>HEAR Score:</b> <span id="hear_score"></span></p>
+        </div>
+
+        <div class="card">
+            <h5 class="text-primary">Chẩn đoán gợi ý</h5>
+            <p id="chandoan_goiy"></p>
+        </div>
+
+        <div class="card">
+            <h5 class="text-primary">Khuyến cáo</h5>
+            <ul id="khuyen_cao"></ul>
+        </div>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
