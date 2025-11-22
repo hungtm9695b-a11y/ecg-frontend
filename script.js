@@ -1,6 +1,5 @@
 document.getElementById("analyzeBtn").addEventListener("click", async () => {
 
-    // Cloud Run URL
     const BACKEND_URL = "https://ecg-backend-229625116536.asia-southeast1.run.app/analyze";
 
     const fileInput = document.getElementById("ecg");
@@ -33,11 +32,11 @@ document.getElementById("analyzeBtn").addEventListener("click", async () => {
     document.querySelectorAll('.risk:checked').forEach(cb => risks.push(cb.value));
     formData.append("risks", risks.join(", "));
 
-    // HEAR Score input
+    // HEAR score
     formData.append("hear", document.getElementById("hear_score_input")?.value || "");
 
-    if (loadingDiv) loadingDiv.style.display = "block";
-    if (resultBox) resultBox.style.display = "none";
+    loadingDiv.style.display = "block";
+    resultBox.style.display = "none";
 
     try {
         let response = await fetch(BACKEND_URL, {
@@ -49,76 +48,69 @@ document.getElementById("analyzeBtn").addEventListener("click", async () => {
 
         let result = await response.json();
 
-        if (loadingDiv) loadingDiv.style.display = "none";
-        if (resultBox) resultBox.style.display = "block";
+        loadingDiv.style.display = "none";
+        resultBox.style.display = "block";
 
         // --- PHÂN TÍCH ECG ---
         setText("ecg_phan_tich", result.ecg_phan_tich);
         setText("ketluan_ecg", result.ket_luan_ecg);
 
         // --- RỐI LOẠN NHỊP ---
-        let rln_block = document.getElementById("roi_loan_nhip_block");
         if (result.roi_loan_nhip && result.roi_loan_nhip.length > 2) {
-            if (rln_block) rln_block.style.display = "block";
+            document.getElementById("roi_loan_nhip_block").style.display = "block";
             setText("roi_loan_nhip", result.roi_loan_nhip);
         } else {
-            if (rln_block) rln_block.style.display = "none";
+            document.getElementById("roi_loan_nhip_block").style.display = "none";
         }
 
-        // --- ICON NGUY CƠ ---
+        // --- ICON NGUY CƠ (ĐÃ SỬA: BỎ QUA NẾU KHÔNG TÌM THẤY) ---
         let iconBox = document.getElementById("riskIcon");
         let riskText = document.getElementById("muc_nguy_co");
-
         let mucNguyCo = (result.muc_nguy_co || "").trim();
-        if (riskText) riskText.innerText = mucNguyCo;
 
-        if (iconBox) {
+        if (iconBox && riskText) {
             iconBox.className = "risk-icon-box"; // reset
+            riskText.innerText = mucNguyCo || "";
 
             if (mucNguyCo.includes("Cao")) iconBox.classList.add("risk-high");
             else if (mucNguyCo.includes("Trung")) iconBox.classList.add("risk-medium");
             else iconBox.classList.add("risk-low");
         }
 
-        // --- HEAR SCORE ---
+        // --- HEAR score ---
         let hearText = result.hear_score_text;
         if (!hearText || hearText.trim() === "") {
             hearText = "Không cung cấp";
         }
         setText("hear_score", hearText);
 
-        // --- CHẨN ĐOÁN GỢI Ý ---
+        // --- Chẩn đoán gợi ý ---
         setText("chandoan_goiy", result.chan_doan_goi_y);
 
-        // --- KHUYẾN CÁO ---
+        // --- Khuyến cáo ---
         let ul = document.getElementById("khuyen_cao");
-        if (ul) {
-            ul.innerHTML = "";
+        ul.innerHTML = "";
 
-            let list = Array.isArray(result.khuyen_cao) ? result.khuyen_cao : [result.khuyen_cao];
+        let list = Array.isArray(result.khuyen_cao) ? result.khuyen_cao : [result.khuyen_cao];
 
-            list.forEach(item => {
-                if (item) {
-                    let li = document.createElement("li");
-                    li.innerText = item;
-                    ul.appendChild(li);
-                }
-            });
-        }
+        list.forEach(item => {
+            if (item) {
+                let li = document.createElement("li");
+                li.innerText = item;
+                ul.appendChild(li);
+            }
+        });
 
-        // --- AUTO SCROLL TO RESULT ---
-        if (resultBox) {
-            setTimeout(() => {
-                resultBox.scrollIntoView({ behavior: "smooth" });
-            }, 200);
-        }
+        // --- Tự động cuộn xuống ---
+        setTimeout(() => {
+            resultBox.scrollIntoView({ behavior: "smooth" });
+        }, 200);
 
     } catch (err) {
-        if (loadingDiv) loadingDiv.style.display = "none";
+        loadingDiv.style.display = "none";
         alert("Lỗi: " + err.message);
     }
 });
-
 
 function setText(id, text) {
     let el = document.getElementById(id);
